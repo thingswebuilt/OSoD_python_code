@@ -13,6 +13,7 @@ Ensure that you are using Python 3.10 and create a virtualenv if you don't alrea
 `python -m venv venv`
 
 Install the Python requirements
+
 `python -m pip install -r requirements/requirements.txt`
 
 
