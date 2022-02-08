@@ -5,6 +5,7 @@ import operator
 import numpy as np
 from numpy.linalg import svd
 import math
+from sklearn import linear_model
 
 def average_distance(sensor_reading: list[list[int]]) -> float:
     """returns the average value of all readings"""
@@ -49,21 +50,19 @@ def create_point_cloud(sensor_reading: list[list[int]]) -> list[tuple[float, flo
 
 
 def plane_fit(sensor_reading: list[list[int]]) -> tuple[list[float],list[float]]:
-    """
-    p, n = planeFit(points)
+    """ use a lienar model to get a best fit plane of the sensor reading"""
+    # your data is stored as X, Y, Z
+    X, Y, Z = np.array(create_point_cloud(sensor_reading))
 
-    Given an array, points, of shape (d,...)
-    representing points in d-dimensional space,
-    fit an d-dimensional plane to the points.
-    Return a point, p, on the plane (the point-cloud centroid),
-    and the normal, n.
-    """
-    point_cloud = create_point_cloud(sensor_reading)
-    # Collapse trialing dimensions
-    points = np.reshape(point_cloud, (np.shape(point_cloud)[0], -1))
+    print(X.shape, Y.shape, Z.shape)
 
-    assert points.shape[0] <= points.shape[1], "There are only {} points in {} dimensions.".format(points.shape[1], points.shape[0])
-    ctr = points.mean(axis=1)
-    x = points - ctr[:,np.newaxis]
-    M = np.dot(x, x.T) # Could also use np.cov(x) here.
-    return ctr, svd(M)[0][:,-1]
+    x1, y1, z1 = X.flatten(), Y.flatten(), Z.flatten()
+
+    X_data = np.array([x1, y1]).reshape((-1, 2))
+    Y_data = z1
+
+    reg = linear_model.LinearRegression().fit(X_data, Y_data)
+
+    print("coefficients of equation of plane, (a1, a2): ", reg.coef_)
+
+    print("value of intercept, c:", reg.intercept_)
