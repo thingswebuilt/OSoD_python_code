@@ -1,6 +1,6 @@
 """tests to check tof_tools functions work as expected"""
 import pytest
-from tof_tools import average_distance
+from osod.tof_tools import average_distance
 
 
 TofFixture = list[list[int]]
