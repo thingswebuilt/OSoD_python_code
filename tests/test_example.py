@@ -1,3 +1,5 @@
+"""Test for the example module"""
+
 from typing import TypedDict
 from example import my_cool_function
 
