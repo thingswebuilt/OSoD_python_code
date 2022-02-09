@@ -19,5 +19,12 @@ Install the Python requirements
 
 ## Usage
 
-Before using the code, you will need to activate the virtualenv - on windows:
+Before using the code, you will need to activate the virtualenv - on windows, using powershell or command prompt:
+
 `venv/Scripts/activate`
+
+if using linux or git bash on windows:
+
+`venv/bin/activate`
+
+see https://docs.python.org/3/library/venv.html#creating-virtual-environments for more info
