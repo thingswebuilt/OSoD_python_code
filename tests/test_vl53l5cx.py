@@ -92,6 +92,21 @@ def test_eight_by_eight_requires_64_elements():
             Vl53l5cxReading(raw_sensor_data, mode=sensor_mode)
 
 
+def test_defaults_to_eight_by_eight():
+    """ensure that vl53l5cx defaults to eight by eight mode"""
+    reading = Vl53l5cxReading([1] * 64)
+    assert reading.mode == Vl53l5cxMode.EIGHTBYEIGHT
+
+
+def test_ints_only():
+    """ensure that our data model throws an error if fed non-ints"""
+    raw_sensor_data = [1.1] * 64  # type: ignore
+    # expect this to raise an error
+    with pytest.raises(ValueError) as e_info:
+        Vl53l5cxReading(raw_sensor_data, mode=Vl53l5cxMode.EIGHTBYEIGHT)  # type: ignore
+        assert e_info.value == ("Only ints are accepted in sensor data")
+
+
 def test_average_for_perfect_flat_reading(perfect_flat_reading: Vl53l5cxReading):
     """ "average_distance should always average all provided readings"""
     assert perfect_flat_reading.average == 1000
