@@ -1,10 +1,11 @@
 """tools for processing data from VL53L5CX sensors"""
 
 import functools
+import math
 import operator
 from typing import TypeAlias
+
 import numpy as np
-import math
 from skspatial.objects import Plane, Vector
 
 from . import TofReadingSet
