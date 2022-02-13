@@ -57,6 +57,19 @@ def test_8x8_dataframe_accepts_max_64_zone_readings():
         df_8x8.add_reading(zone_reading_2)
 
 
+def test_dataframe_as_list():
+    """test that dataframe returns a list of floats/ints"""
+    df_8x8 = Vl53l5cxDataFrame8x8()
+    value_list = list(range(1, 65))
+    for value in value_list:
+        zone_reading = Vl53l5cxZoneReading(
+            value=value, status=Vl53l5cxStatus.RANGE_VALID, zone=value
+        )
+        df_8x8.add_reading(zone_reading)
+
+    assert df_8x8.as_list() == value_list
+
+
 # def test_8x8_instantiates_correctly(perfect_flat_reading_data: list[int]):
 #     """test the single zone data model instantiates correctly"""
 #     frame = Vl53l5cxFrame8x8(perfect_flat_reading_data)

@@ -39,6 +39,10 @@ class Vl53lcxDataFrameBase:
 
         self.data.append(reading)
 
+    def as_list(self) -> list[float]:
+        """return all values as a list"""
+        return [item.value for item in self.data]
+
 
 class Vl53l5cxDataFrame1x1(Vl53lcxDataFrameBase):
     """A single data frame of readings from vl53l5cx sensor in 1x1 mode"""
