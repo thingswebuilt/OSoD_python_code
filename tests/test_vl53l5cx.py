@@ -1,127 +1,66 @@
 """tests to check tof_tools functions work as expected"""
 
-from typing import Iterable, cast
-
 import pytest
 from osod.tof.enums import Vl53l5cxStatus
 from osod.tof.models import (
-    Vl53l5cxFrame1x1,
-    Vl53l5cxFrame8x8,
-    Vl53l5cxFrame8x8Data,
+    Vl53l5cxDataFrame1x1,
+    Vl53l5cxDataFrame4x4,
+    Vl53l5cxDataFrame8x8,
     Vl53l5cxZoneReading,
 )
 
 
-@pytest.fixture
-def perfect_flat_reading_data() -> Vl53l5cxFrame8x8Data:
-    """pytest fixture to return data for flat tof reading"""
-    raw_sensor_data = (1000,) * 64
-
-    return cast(
-        Vl53l5cxFrame8x8Data,
-        tuple(
-            Vl53l5cxZoneReading(
-                value=value, status=Vl53l5cxStatus.RANGE_VALID, zone=index
-            )
-            for index, value in enumerate(cast(Iterable[int], raw_sensor_data), start=1)
-        ),
-    )
-
-
-@pytest.fixture
-def oblique_reading_data() -> Vl53l5cxFrame8x8Data:
-    """pytest fixture to return data for oblique tof reading"""
-    raw_sensor_data = (
-        1398,
-        1560,
-        1488,
-        1464,
-        1523,
-        1697,
-        1656,
-        1853,
-        1635,
-        1671,
-        1831,
-        1646,
-        1566,
-        1550,
-        1760,
-        1771,
-        1347,
-        1409,
-        1981,
-        1969,
-        2244,
-        2077,
-        2218,
-        2188,
-        1341,
-        1373,
-        2170,
-        2182,
-        2396,
-        2234,
-        2262,
-        2158,
-        1946,
-        1673,
-        2204,
-        2257,
-        2256,
-        2279,
-        2273,
-        2360,
-        1833,
-        2055,
-        2069,
-        2110,
-        2146,
-        2157,
-        2170,
-        2212,
-        1832,
-        1932,
-        1905,
-        1947,
-        1943,
-        1966,
-        1985,
-        1987,
-        1766,
-        1769,
-        1802,
-        1804,
-        1840,
-        1811,
-        1826,
-        1851,
-    )
-    return cast(
-        Vl53l5cxFrame8x8Data,
-        tuple(
-            Vl53l5cxZoneReading(value, Vl53l5cxStatus.RANGE_VALID, zone=index)
-            for index, value in enumerate(cast(Iterable[int], raw_sensor_data), start=1)
-        ),
-    )
-
-
-# from fixtures.vl53l5cx_fixtures import perfect_flat_reading_data
-
-
-def test_single_instantiates_correctly():
-    """test the single zone data model instantiates correctly"""
+def test_1x1_dataframe_accepts_only_single_zone_reading():
+    """test the single zone data model accepts only one zone reading"""
+    df_1x1 = Vl53l5cxDataFrame1x1()
     zone_reading = Vl53l5cxZoneReading(
         value=1, status=Vl53l5cxStatus.RANGE_VALID, zone=1
     )
-    frame = Vl53l5cxFrame1x1(zone_reading)
-    assert frame.data == zone_reading
+    df_1x1.add_reading(zone_reading)
+
+    with pytest.raises(ValueError):
+        zone_reading_2 = Vl53l5cxZoneReading(
+            value=1, status=Vl53l5cxStatus.RANGE_VALID, zone=2
+        )
+        df_1x1.add_reading(zone_reading_2)
 
 
-def test_8x8_instantiates_correctly(perfect_flat_reading_data: Vl53l5cxFrame8x8Data):
-    """test the single zone data model instantiates correctly"""
-    frame = Vl53l5cxFrame8x8(perfect_flat_reading_data)
-    assert frame.data == perfect_flat_reading_data
+def test_4x4_dataframe_accepts_max_16_zone_readings():
+    """test the 4x4 zone data model accepts a maximum of 16 zone readings"""
+    df_1x1 = Vl53l5cxDataFrame4x4()
+    for zone_index in range(1, 17):
+        zone_reading = Vl53l5cxZoneReading(
+            value=1, status=Vl53l5cxStatus.RANGE_VALID, zone=zone_index
+        )
+        df_1x1.add_reading(zone_reading)
+
+    with pytest.raises(ValueError):
+        zone_reading_2 = Vl53l5cxZoneReading(
+            value=1, status=Vl53l5cxStatus.RANGE_VALID, zone=2
+        )
+        df_1x1.add_reading(zone_reading_2)
+
+
+def test_4x4_dataframe_accepts_max_64_zone_readings():
+    """test the 8x8 zone data model accepts a maximum of 64 zone readings"""
+    df_1x1 = Vl53l5cxDataFrame8x8()
+    for zone_index in range(1, 65):
+        zone_reading = Vl53l5cxZoneReading(
+            value=1, status=Vl53l5cxStatus.RANGE_VALID, zone=zone_index
+        )
+        df_1x1.add_reading(zone_reading)
+
+    with pytest.raises(ValueError):
+        zone_reading_2 = Vl53l5cxZoneReading(
+            value=1, status=Vl53l5cxStatus.RANGE_VALID, zone=2
+        )
+        df_1x1.add_reading(zone_reading_2)
+
+
+# def test_8x8_instantiates_correctly(perfect_flat_reading_data: list[int]):
+#     """test the single zone data model instantiates correctly"""
+#     frame = Vl53l5cxFrame8x8(perfect_flat_reading_data)
+#     assert frame.data == perfect_flat_reading_data
 
 
 # def test_average_for_perfect_flat_reading(perfect_flat_reading: Vl53l5cxFrame):

@@ -1,6 +1,5 @@
 """models related to time of Flight sensors"""
 from dataclasses import dataclass
-from typing import TypeAlias
 
 from osod.tof.enums import Vl53l5cxStatus
 
@@ -18,43 +17,48 @@ class Vl53l5cxZoneReading:
             raise ValueError("Zone must be between 1 and '64'")
 
 
-Vl53l5cxFrame1x1Data: TypeAlias = Vl53l5cxZoneReading
+class Vl53lcxDataFrameBase:
+    """A single data frame of readings froma vl53l5cx sensor."""
 
-Vl53l5cxFrame4x4Data: TypeAlias = tuple[
-    Vl53l5cxZoneReading,
-    Vl53l5cxZoneReading,
-    Vl53l5cxZoneReading,
-    Vl53l5cxZoneReading,
-]
+    data: list[Vl53l5cxZoneReading]
+    max_readings: int
 
-Vl53l5cxFrame8x8Data: TypeAlias = tuple[
-    Vl53l5cxZoneReading,
-    Vl53l5cxZoneReading,
-    Vl53l5cxZoneReading,
-    Vl53l5cxZoneReading,
-    Vl53l5cxZoneReading,
-    Vl53l5cxZoneReading,
-    Vl53l5cxZoneReading,
-    Vl53l5cxZoneReading,
-]
+    def __init__(self) -> None:
+        self.data = []
+        self.max_readings = 0
 
+    def add_reading(self, reading: Vl53l5cxZoneReading) -> None:
+        """add a single Vl53l5cx zone reading to the data frame"""
+        if len(self.data) == self.max_readings:
+            raise ValueError(
+                (
+                    f"Cannot add reading. Max number of readings for "
+                    f"{self.__class__.__name__} is {self.max_readings}"
+                )
+            )
 
-@dataclass
-class Vl53l5cxFrame1x1:
-    """All readings for a single 'frame' from a VL53L5CX"""
-
-    data: Vl53l5cxFrame1x1Data
+        self.data.append(reading)
 
 
-@dataclass
-class Vl53l5cxFrame4x4:
-    """All readings for a single 'frame' from a VL53L5CX"""
+class Vl53l5cxDataFrame1x1(Vl53lcxDataFrameBase):
+    """A single data frame of readings from vl53l5cx sensor in 1x1 mode"""
 
-    data: Vl53l5cxFrame4x4Data
+    def __init__(self) -> None:
+        super().__init__()
+        self.max_readings = 1
 
 
-@dataclass
-class Vl53l5cxFrame8x8:
-    """All readings for a single 'frame' from a VL53L5CX"""
+class Vl53l5cxDataFrame4x4(Vl53lcxDataFrameBase):
+    """A single data frame of readings from vl53l5cx sensor in 4x4 mode"""
 
-    data: Vl53l5cxFrame8x8Data
+    def __init__(self) -> None:
+        super().__init__()
+        self.max_readings = 16
+
+
+class Vl53l5cxDataFrame8x8(Vl53lcxDataFrameBase):
+    """A single data frame of readings from vl53l5cx sensor in 8x8 mode"""
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.max_readings = 64

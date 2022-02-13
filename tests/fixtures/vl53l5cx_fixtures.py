@@ -1,34 +1,27 @@
 """Fixtures for vl53lcx tof tests"""
-from typing import Iterable, cast
 import pytest
 
-from osod.tof.enums import Vl53l5cxStatus
-from osod.tof.models import (
-    Vl53l5cxFrame8x8Data,
-    Vl53l5cxZoneReading,
-)
-
 
 @pytest.fixture
-def perfect_flat_reading_data() -> Vl53l5cxFrame8x8Data:
+def perfect_flat_reading_data() -> list[int]:
     """pytest fixture to return data for flat tof reading"""
-    raw_sensor_data = (1000,) * 64
+    return [1000] * 64
 
-    return cast(
-        Vl53l5cxFrame8x8Data,
-        tuple(
-            Vl53l5cxZoneReading(
-                value=value, status=Vl53l5cxStatus.RANGE_VALID, zone=index
-            )
-            for index, value in enumerate(cast(Iterable[int], raw_sensor_data), start=1)
-        ),
-    )
+    # return cast(
+    #     Vl53l5cxFrame8x8Data,
+    #     tuple(
+    #         Vl53l5cxZoneReading(
+    #             value=value, status=Vl53l5cxStatus.RANGE_VALID, zone=index
+    #         )
+    #         for index, value in enumerate(cast(Iterable[int], raw_sensor_data), start=1)
+    #     ),
+    # )
 
 
 @pytest.fixture
-def oblique_reading_data() -> Vl53l5cxFrame8x8Data:
+def oblique_reading_data() -> list[int]:
     """pytest fixture to return data for oblique tof reading"""
-    raw_sensor_data = (
+    return [
         1398,
         1560,
         1488,
@@ -93,11 +86,11 @@ def oblique_reading_data() -> Vl53l5cxFrame8x8Data:
         1811,
         1826,
         1851,
-    )
-    return cast(
-        Vl53l5cxFrame8x8Data,
-        tuple(
-            Vl53l5cxZoneReading(value, Vl53l5cxStatus.RANGE_VALID, zone=index)
-            for index, value in enumerate(cast(Iterable[int], raw_sensor_data), start=1)
-        ),
-    )
+    ]
+    # return cast(
+    #     Vl53l5cxFrame8x8Data,
+    #     tuple(
+    #         Vl53l5cxZoneReading(value, Vl53l5cxStatus.RANGE_VALID, zone=index)
+    #         for index, value in enumerate(cast(Iterable[int], raw_sensor_data), start=1)
+    #     ),
+    # )
