@@ -1,12 +1,9 @@
-"""tests to check tof_tools functions work as expected"""
-
+"""Fixtures for vl53lcx tof tests"""
 from typing import Iterable, cast
-
 import pytest
+
 from osod.tof.enums import Vl53l5cxStatus
 from osod.tof.models import (
-    Vl53l5cxFrame1x1,
-    Vl53l5cxFrame8x8,
     Vl53l5cxFrame8x8Data,
     Vl53l5cxZoneReading,
 )
@@ -104,31 +101,3 @@ def oblique_reading_data() -> Vl53l5cxFrame8x8Data:
             for index, value in enumerate(cast(Iterable[int], raw_sensor_data), start=1)
         ),
     )
-
-
-# from fixtures.vl53l5cx_fixtures import perfect_flat_reading_data
-
-
-def test_single_instantiates_correctly():
-    """test the single zone data model instantiates correctly"""
-    zone_reading = Vl53l5cxZoneReading(
-        value=1, status=Vl53l5cxStatus.RANGE_VALID, zone=1
-    )
-    frame = Vl53l5cxFrame1x1(zone_reading)
-    assert frame.data == zone_reading
-
-
-def test_8x8_instantiates_correctly(perfect_flat_reading_data: Vl53l5cxFrame8x8Data):
-    """test the single zone data model instantiates correctly"""
-    frame = Vl53l5cxFrame8x8(perfect_flat_reading_data)
-    assert frame.data == perfect_flat_reading_data
-
-
-# def test_average_for_perfect_flat_reading(perfect_flat_reading: Vl53l5cxFrame):
-#     """ "average_distance should always average all provided readings"""
-#     assert perfect_flat_reading.average == 1000
-
-
-# def test_average_for_oblique_reading(oblique_reading: Vl53l5cxFrame):
-#     """ "average_distance should always average all provided readings"""
-#     assert oblique_reading.average == 1899.75
