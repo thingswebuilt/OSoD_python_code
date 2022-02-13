@@ -11,6 +11,11 @@ class Vl53l5cxZoneReading:
 
     value: int
     status: Vl53l5cxStatus
+    zone: int
+
+    def __post_init__(self):
+        if self.zone < 0 or self.zone > 64:
+            raise ValueError("Zone must be between 1 and '64'")
 
 
 Vl53l5cxFrame1x1Data: TypeAlias = Vl53l5cxZoneReading
