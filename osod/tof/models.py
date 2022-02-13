@@ -1,50 +1,55 @@
-from enum import Enum, auto
-from statistics import mean
+"""models related to time of Flight sensors"""
+from dataclasses import dataclass
+from typing import TypeAlias
+
+from osod.tof.enums import Vl53l5cxStatus
 
 
-class Vl53l5cxMode(Enum):
-    """Vl53l5cx modes"""
+@dataclass
+class Vl53l5cxZoneReading:
+    """A distance reading for a single zone of a vl53l5cx"""
 
-    SINGLE = auto()
-    FOURBYFOUR = auto()
-    EIGHTBYEIGHT = auto()
+    value: int
+    status: Vl53l5cxStatus
 
 
-class Vl53l5cxReading:
-    """A single reading from a vl53l5cx sensor"""
+Vl53l5cxFrame1x1Data: TypeAlias = Vl53l5cxZoneReading
 
-    data: list[int]
-    mode: Vl53l5cxMode
+Vl53l5cxFrame4x4Data: TypeAlias = tuple[
+    Vl53l5cxZoneReading,
+    Vl53l5cxZoneReading,
+    Vl53l5cxZoneReading,
+    Vl53l5cxZoneReading,
+]
 
-    expected_list_length = {
-        Vl53l5cxMode.EIGHTBYEIGHT: 64,
-        Vl53l5cxMode.FOURBYFOUR: 16,
-        Vl53l5cxMode.SINGLE: 1,
-    }
+Vl53l5cxFrame8x8Data: TypeAlias = tuple[
+    Vl53l5cxZoneReading,
+    Vl53l5cxZoneReading,
+    Vl53l5cxZoneReading,
+    Vl53l5cxZoneReading,
+    Vl53l5cxZoneReading,
+    Vl53l5cxZoneReading,
+    Vl53l5cxZoneReading,
+    Vl53l5cxZoneReading,
+]
 
-    def __init__(
-        self, values: list[int], mode: Vl53l5cxMode = Vl53l5cxMode.EIGHTBYEIGHT
-    ) -> None:
-        # do we have the correct number of items?
-        num_values = len(values)
-        expected_num_values = self.expected_list_length[mode]
 
-        if num_values != self.expected_list_length[mode]:
-            raise ValueError(
-                (
-                    f"Unexpected number of data elements for TofValue."
-                    f"Expected {expected_num_values}, received {num_values}"
-                )
-            )
+@dataclass
+class Vl53l5cxFrame1x1:
+    """All readings for a single 'frame' from a VL53L5CX"""
 
-        # are they all ints?
-        if not all(isinstance(value, int) for value in values):  # type: ignore
-            raise ValueError("Only ints are accepted in sensor data")
+    data: Vl53l5cxFrame1x1Data
 
-        self.mode = mode
-        self.data = values
 
-    @property
-    def average(self) -> float:
-        """Return averge ranging value"""
-        return mean(self.data)
+@dataclass
+class Vl53l5cxFrame4x4:
+    """All readings for a single 'frame' from a VL53L5CX"""
+
+    data: Vl53l5cxFrame4x4Data
+
+
+@dataclass
+class Vl53l5cxFrame8x8:
+    """All readings for a single 'frame' from a VL53L5CX"""
+
+    data: Vl53l5cxFrame8x8Data
