@@ -3,4 +3,5 @@ black
 pylint
 pylint-pytest
 mypy
+approxeng.input
 ipython
