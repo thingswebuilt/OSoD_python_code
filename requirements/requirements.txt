@@ -3,3 +3,4 @@ black
 pylint
 pylint-pytest
 mypy
+ipython
