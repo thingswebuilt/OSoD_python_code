@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 import logging
-from typing import Protocol, Generator
+from typing import Dict, Protocol, Generator, get_type_hints
 from approxeng.input.selectbinder import ControllerResource
 from approxeng.input.controllers import ControllerNotFoundError
 
@@ -9,8 +9,26 @@ from approxeng.input.controllers import ControllerNotFoundError
 class InputStreamItem:
     """Class representing a single item in the input device stream"""
 
+    square: float
+    triangle: float
+    circle: float
+    cross: float
     lx: float
     ly: float
+    rx: float
+    ry: float
+    select: float
+    start: float
+    home: float
+    dup: float
+    ddown: float
+    dleft: float
+    dright: float
+    l1: float
+    l2: float
+    r1: float
+    r2: float
+    ps4_pad: float
 
 
 class InputStreamError(Exception):
@@ -38,8 +56,9 @@ class PSController:
                 # Loop until we're disconnected
                 while joystick.connected:
                     logging.debug("joystick connected..")
-                    state: tuple[float, float] = joystick["lx", "ly"]  # type: ignore
-                    yield InputStreamItem(*state)
+                    state = joystick["square", "triangle", "circle", "cross", "lx", "ly", "rx", "ry", "select", "start", "home", "dup", "ddown", "dleft", "dright", "l1", "l2", "r1", "r2", "ps4_pad"]  # type: ignore
+
+                    yield InputStreamItem(*state)  # type: ignore
                 # logging.debug("joystick disconnected")
         except ControllerNotFoundError as exc:
             logging.info("No controller found")
