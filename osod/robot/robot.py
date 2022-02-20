@@ -14,6 +14,7 @@ class Robot:
 
     def start(self) -> None:
         """Set robot into 'running' mode"""
+        # pylint: disable=assignment-from-no-return
         self.input_stream = self.input_device.get_input_stream()
         self.is_running = True
 
@@ -23,11 +24,11 @@ class Robot:
 
     def loop(self) -> None:
         """Perform event loop for robot"""
-        # input_device_state = self.input_device.get_device_state()
         if self.is_running:
             try:
                 result = next(self.input_stream)
                 logging.info(result)
             except (controllers.InputStreamError, StopIteration):
+                # pylint: disable=assignment-from-no-return
                 logging.info("input stream error")
                 self.input_stream = self.input_device.get_input_stream()
