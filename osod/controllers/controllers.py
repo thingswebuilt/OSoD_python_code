@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 import logging
-from typing import Iterator, Protocol, Generator
+from typing import Protocol, Generator
 from approxeng.input.selectbinder import ControllerResource
 from approxeng.input.controllers import ControllerNotFoundError
 
