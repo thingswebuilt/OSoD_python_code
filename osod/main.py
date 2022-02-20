@@ -1,16 +1,9 @@
-from dataclasses import dataclass
 import logging
 
 from controllers import controllers
+from robot.robot import Robot
 
 logging.basicConfig(level=logging.INFO)
-
-
-@dataclass
-class Robot:
-    """robot class"""
-
-    input_device: controllers.InputDevice
 
 
 def main() -> None:
@@ -18,9 +11,9 @@ def main() -> None:
     logging.debug("starting main method")
     input_device = controllers.PSController()
     robot = Robot(input_device=input_device)
-    robot.input_device.start()
+    robot.start()
     while True:
-        logging.debug("still True")
+        robot.loop()
 
 
 if __name__ == "__main__":
